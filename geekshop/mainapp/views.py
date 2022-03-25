@@ -4,6 +4,8 @@ import json
 from django.shortcuts import render
 
 # Create your views here.
+from mainapp.models import Product
+
 MODULE_DIR = os.path.dirname(__file__)
 
 def read_file(name):
