@@ -1,9 +1,9 @@
 {% extends 'adminapp/base.html' %}
 {% block context %}
     <div class="container-fluid">
-        <h1 class="mt-4">Редактирование пользователя | {{ user_select.username }}</h1>
+        <h1 class="mt-4">Редактирование пользователя | {{ user.username }}</h1>
         <div class="card-body">
-            <form action="{% url 'adminapp:admin_user_update' user_select.id %}" method="post"
+            <form action="{% url 'adminapp:admin_user_update' user.id %}" method="post"
                   enctype="multipart/form-data">
                 {% csrf_token %}
                 <div class="form-row">
@@ -50,7 +50,7 @@
                     </div>
                 </div>
             </form>
-            <form action="{% url 'adminapp:admin_user_delete' user_select.id %}">
+            <form action="{% url 'adminapp:admin_user_delete' user.id %}" method="post">
                 {% csrf_token %}
                 <div class="row">
                     <div class="col-lg-12" style="margin-top: 33px;">
