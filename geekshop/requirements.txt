@@ -6,7 +6,10 @@ charset-normalizer==2.0.12
 cryptography==37.0.0
 defusedxml==0.7.1
 Django==3.2.6
+django-debug-toolbar==3.4.0
+django-debug-toolbar-template-profiler==2.0.2
 idna==3.3
+include==0.2.2
 oauthlib==3.2.0
 Pillow==9.0.1
 psycopg2-binary==2.9.3
@@ -21,3 +24,4 @@ social-auth-app-django==5.0.0
 social-auth-core==4.2.0
 sqlparse==0.4.2
 urllib3==1.26.9
+wrapt==1.14.1
