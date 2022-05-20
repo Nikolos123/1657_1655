@@ -49,14 +49,16 @@ INSTALLED_APPS = [
     #install
     'social_django',
     'debug_toolbar',
-    'template_profiler_panel'
+    'template_profiler_panel',
+    'django_extensions'
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    # 'django.middleware.csrf.CsrfViewMiddleware',
+    'geekshop.mid.DisableCSRFMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -93,7 +95,7 @@ WSGI_APPLICATION = 'geekshop.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
-SERVER = True
+SERVER = False
 if SERVER:
     DATABASES = {
         'default': {
