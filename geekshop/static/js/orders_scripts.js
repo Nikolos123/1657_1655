@@ -1,5 +1,44 @@
 window.onload = function () {
 
+
+
+     $('.basket_list').on('click','input[type="number"]',function (){
+
+    let t_href = event.target;
+    console.log(t_href.name,t_href.value);
+
+    $.ajax(
+        {
+            url:"/basket/edit/" + t_href.name + "/" + t_href.value+ "/",
+            success: function (data){
+                $('.basket_list').html(data.result)
+            }
+        }
+    )
+
+    })
+
+
+
+
+    $('.card_add_basket').on('click','button[type="button"]',function (){
+
+    let t_href = event.target.value;
+    console.log(t_href);
+
+    $.ajax(
+        {
+            url:"/basket/add/" + t_href + "/",
+            success: function (data){
+                $('.card_add_basket').html(data.result)
+            }
+        }
+    )
+
+    })
+
+
+
     let quantity, price, orderitem_num, delta_quantity, orderitem_quantity, delta_cost;
 
     let quantity_arr = []
@@ -104,6 +143,37 @@ window.onload = function () {
             })
         }
 
+
+    })
+
+     $(document).on('change', '.order_form select', function () {
+
+        let target = event.target;
+        orderitem_num = parseInt(target.name.replace('orderitems-', '').replace('-product', ''));
+        let orderitem_product_pk = target.options[target.selectedIndex].value;
+
+        console.log(orderitem_num)
+        console.log(orderitem_product_pk)
+
+        if (orderitem_product_pk) {
+            $.ajax({
+                url: '/orders/product/' + orderitem_product_pk + '/price/',
+                success: function (data) {
+                    if (data.price) {
+                        price_arr[orderitem_num] = parseFloat(data.price)
+                        if (isNaN(quantity_arr[orderitem_num])) {
+                            quantity_arr[orderitem_num] = 0;
+                        }
+                        let price_html = '<span class="orderitems-' + orderitem_num + '-price">'
+                            + data.price.toString().replace('.', ',') + '</span> руб';
+                        let current_tr = $('.order_form table').find('tr:eq(' + (orderitem_num + 1) + ')');
+                        current_tr.find('td:eq(2)').html(price_html)
+                    }
+                }
+
+
+            })
+        }
 
     })
 
