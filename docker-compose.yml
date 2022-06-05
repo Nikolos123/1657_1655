@@ -1,0 +1,69 @@
+version: '3.1'
+
+
+services:
+  db:
+    image: postgres:13.1
+    container_name: postgresql
+    privileged: true
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: nikolay
+      POSTGRES_PASSWORD: 1
+      POSTGRES_DB: db
+  backend:
+    container_name: backend
+    env_file: ./.env
+    build: ./geekshop
+    privileged: true
+    ports:
+      - 8012:8012
+    command:
+      bash -c "python manage.py migrate &&
+      python manage.py runserver 0.0.0.0:8012"
+    depends_on:
+      - db
+  redis:
+    container_name: redis
+    image: redis:alpine
+  celery-worker:
+      container_name: worker_celery
+      env_file: ./.env
+      build: ./geekshop
+      command: celery -A geekshop worker -l info
+      depends_on:
+        - redis
+        - db
+        - backend
+  celery-beat:
+      container_name: beat_celery
+      env_file: ./.env
+      build: ./geekshop
+      command: celery -A geekshop beat -l info
+      depends_on:
+        - redis
+        -  db
+        - backend
+  flower:
+    image: mher/flower
+    container_name: ui_celery
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - FLOWER_PORT=8888
+    ports:
+      - 8888:8888
+  adminer:
+    container_name: ui_postgresql
+    image: adminer:4.7.8-standalone
+    restart: always
+    ports:
+      - 8015:8015
+    command:
+      - 'php'
+      - '-S'
+      - '[::]:8015'
+      - '-t'
+      - '/var/www/html'
+    depends_on:
+      - db

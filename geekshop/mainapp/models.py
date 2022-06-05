@@ -7,6 +7,8 @@ from django.db import models
 class ProductCategories(models.Model):
     '''model for category'''
 
+
+
     name = models.CharField(max_length=64)
     descriptions = models.TextField(blank=True, null=True)
 

@@ -1,0 +1,21 @@
+ERROR 2022-06-05 11:42:28,809 Database <ul class="errorlist"><li>password2<ul class="errorlist"><li>Введенные пароли не совпадают.</li></ul></li></ul>
+INFO 2022-06-05 11:42:51,621 Database nikolay Вы успешно зарегистрировались
+INFO 2022-06-05 11:43:46,176 Database nikolay Вы успешно зарегистрировались
+ERROR 2022-06-05 11:48:15,226 Database <ul class="errorlist"><li>password2<ul class="errorlist"><li>Введённый пароль слишком похож на имя пользователя.</li></ul></li></ul>
+INFO 2022-06-05 11:48:34,612 Database nikolay Вы успешно зарегистрировались
+INFO 2022-06-05 11:51:10,479 Database nikolay Вы успешно зарегистрировались
+ERROR 2022-06-05 11:52:30,344 Database <ul class="errorlist"><li>username<ul class="errorlist"><li>Пользователь с таким именем уже существует.</li></ul></li></ul>
+ERROR 2022-06-05 11:58:04,504 Database <ul class="errorlist"><li>password2<ul class="errorlist"><li>Введённый пароль слишком похож на имя пользователя.</li></ul></li></ul>
+INFO 2022-06-05 11:58:23,730 Database nikolay_2 Вы успешно зарегистрировались
+ERROR 2022-06-05 12:03:08,660 Database <ul class="errorlist"><li>username<ul class="errorlist"><li>Пользователь с таким именем уже существует.</li></ul></li></ul>
+INFO 2022-06-05 12:03:31,523 Database nikolay_2 Вы успешно зарегистрировались
+INFO 2022-06-05 12:12:25,735 Database Nika Вы успешно зарегистрировались
+INFO 2022-06-05 12:15:22,269 Database nikolay_2 Вы успешно зарегистрировались
+INFO 2022-06-05 12:19:27,199 Database nikolay_2 Вы успешно зарегистрировались
+WARNING 2022-06-05 12:29:03,503 Database user send_to_email(535, b'5.7.8 Username and Password not accepted. Learn more at\n5.7.8  https://support.google.com/mail/?p=BadCredentials z21-20020a0565120c1500b0047255d21141sm196815lfu.112 - gsmtp')
+INFO 2022-06-05 12:29:03,503 Database Nika Вы успешно зарегистрировались
+WARNING 2022-06-05 12:30:17,645 Database user send_to_email(535, b'5.7.8 Error: authentication failed: Invalid user or password! 1654421417-ZRiXhXa4OD-UHMumtUp')
+INFO 2022-06-05 12:30:17,645 Database Nika Вы успешно зарегистрировались
+WARNING 2022-06-05 12:30:57,669 Database user send_to_email[SSL: WRONG_VERSION_NUMBER] wrong version number (_ssl.c:1131)
+INFO 2022-06-05 12:30:57,669 Database Nika Вы успешно зарегистрировались
+INFO 2022-06-05 12:32:19,830 Database Nika Вы успешно зарегистрировались

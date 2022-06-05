@@ -13,6 +13,8 @@ import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
+from celery.schedules import crontab
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
@@ -98,15 +100,29 @@ WSGI_APPLICATION = 'geekshop.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 SERVER = False
+DOCKER = False
 if SERVER:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': 'geekshop',
-            'USER': 'postgres',
+    if DOCKER:
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.postgresql',
+                'NAME': os.getenv("NAME_POSTGRES"),
+                'PASSWORD': os.getenv("PASSWORD_POSTGRES"),
+                'USER': os.getenv("USER_POSTGRES"),
+                'HOST': os.getenv("HOST_POSTGRES"),
+                'PORT': os.getenv("PORT_POSTGRES"),
+            }
         }
-    }
-    STATIC_ROOT = os.path.join(BASE_DIR,'static')
+        STATICFILES_DIRS = (BASE_DIR / 'static',)
+    else:
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.postgresql',
+                'NAME': 'geekshop',
+                'USER': 'postgres',
+            }
+        }
+        STATIC_ROOT = os.path.join(BASE_DIR,'static')
 else:
     DATABASES = {
         'default': {
@@ -142,7 +158,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # LANGUAGE_CODE = 'en-us'
 LANGUAGE_CODE = 'ru-ru'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Moscow'
 
 USE_I18N = True
 
@@ -173,16 +189,19 @@ LOGIN_REDIRECT_URL = '/'
 LOGIN_ERROR_URL = '/'
 
 
-DOMAIN_NAME = 'http://localhost:8000'
-EMAIL_HOST = 'localhost'
-EMAIL_PORT = 25
-EMAIL_HOST_USER =  os.getenv('EMAIL_HOST_USER')
+DOMAIN_NAME = 'http://localhost:8012'
+
+# https://yandex.ru/support/mail/mail-clients/ssl.html#ssl__other
+# описание как создать пароль для приложения
+DEFAULT_FROM_EMAIL = os.getenv('EMAIL_HOST_USER')
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.yandex.ru'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
-EMAIL_USE_SSL = False
-
-
-EMAIL_BACKEND =  'django.core.mail.backends.filebased.EmailBackend'
-EMAIL_FILE_PATH = 'tmp/emails'
+#
+# EMAIL_BACKEND =  'django.core.mail.backends.filebased.EmailBackend'
+# EMAIL_FILE_PATH = 'tmp/emails'
 
 # EMAIL_HOST_USER,EMAIL_HOST_PASSWORD = None,None
 
@@ -221,31 +240,31 @@ SOCIAL_AUTH_PIPELINE = (
 )
 
 
-if DEBUG:
-    def show_toolbar(request):
-        return True
-
-
-    DEBUG_TOOLBAR_CONFIG = {
-        'SHOW_TOOLBAR_CALLBACK': show_toolbar,
-    }
-
-    DEBUG_TOOLBAR_PANELS = [
-        'debug_toolbar.panels.versions.VersionsPanel',
-        'debug_toolbar.panels.timer.TimerPanel',
-        'debug_toolbar.panels.settings.SettingsPanel',
-        'debug_toolbar.panels.headers.HeadersPanel',
-        'debug_toolbar.panels.request.RequestPanel',
-        'debug_toolbar.panels.sql.SQLPanel',
-        'debug_toolbar.panels.templates.TemplatesPanel',
-        'debug_toolbar.panels.staticfiles.StaticFilesPanel',
-        'debug_toolbar.panels.cache.CachePanel',
-        'debug_toolbar.panels.signals.SignalsPanel',
-        'debug_toolbar.panels.logging.LoggingPanel',
-        'debug_toolbar.panels.redirects.RedirectsPanel',
-        'debug_toolbar.panels.profiling.ProfilingPanel',
-        'template_profiler_panel.panels.template.TemplateProfilerPanel',
-    ]
+# if DEBUG:
+#     def show_toolbar(request):
+#         return True
+#
+#
+#     DEBUG_TOOLBAR_CONFIG = {
+#         'SHOW_TOOLBAR_CALLBACK': show_toolbar,
+#     }
+#
+#     DEBUG_TOOLBAR_PANELS = [
+#         'debug_toolbar.panels.versions.VersionsPanel',
+#         'debug_toolbar.panels.timer.TimerPanel',
+#         'debug_toolbar.panels.settings.SettingsPanel',
+#         'debug_toolbar.panels.headers.HeadersPanel',
+#         'debug_toolbar.panels.request.RequestPanel',
+#         'debug_toolbar.panels.sql.SQLPanel',
+#         'debug_toolbar.panels.templates.TemplatesPanel',
+#         'debug_toolbar.panels.staticfiles.StaticFilesPanel',
+#         'debug_toolbar.panels.cache.CachePanel',
+#         'debug_toolbar.panels.signals.SignalsPanel',
+#         'debug_toolbar.panels.logging.LoggingPanel',
+#         'debug_toolbar.panels.redirects.RedirectsPanel',
+#         'debug_toolbar.panels.profiling.ProfilingPanel',
+#         'template_profiler_panel.panels.template.TemplateProfilerPanel',
+#     ]
 
 CACHE_MIDDLEWARE_ALIAS = 'default'
 CACHE_MIDDLEWARE_SECONDS = 120
@@ -257,4 +276,52 @@ CACHES = {
         'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
         'LOCATION' : '127.0.0.1:11211'
     }
+}
+
+
+
+CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL")
+CELERY_RESULT_BACKEND = os.getenv("CELERY_BROKER_URL")
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'database': {
+            'format': '%(levelname)s %(asctime)s Database %(message)s'
+        }
+    },
+    'handlers': {
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': f'{BASE_DIR}/logs/debug.log',
+            'formatter': 'database',
+            'encoding': 'utf-8'
+    }
+    },
+    'loggers': {
+        'authapp.views':{
+            'handlers': ['file',],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+        'authapp.tasks': {
+            'handlers': ['file', ],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    }
+
+}
+
+CELERY_BEAT_SCHEDULE = {
+    "distribution": {
+        "task": "authapp.tasks.distribution",
+        "schedule": crontab(minute="*/1"),
+    },
 }
