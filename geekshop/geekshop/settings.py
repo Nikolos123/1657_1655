@@ -99,8 +99,8 @@ WSGI_APPLICATION = 'geekshop.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
-SERVER = False
-DOCKER = False
+SERVER = True
+DOCKER = True
 if SERVER:
     if DOCKER:
         DATABASES = {
